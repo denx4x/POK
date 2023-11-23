@@ -1,44 +1,53 @@
-using System.Collections;
 using UnityEngine;
+using System.Collections;
 
 public class ObjectSpawner : MonoBehaviour
 {
-    public GameObject[] objectsToSpawn;
+    public GameObject[] objectsToSpawn; // Array prefab objek
+    public float spawnInterval = 2f;     // Interval waktu antara spawn
+    public int numberOfObjects = 10;     // Jumlah objek yang akan di-spawn
+
+    [Header("Spawn Position Range")]
     public float minX = -5f;
     public float maxX = 5f;
     public float minY = -5f;
     public float maxY = 5f;
-    public int numberOfObjects = 10;
 
     void Start()
     {
-        StartCoroutine(SpawnObjects());
+        StartCoroutine(SpawnObjectsWithInterval());
     }
 
-    IEnumerator SpawnObjects()
+    private void SpawnObject()
     {
-        for (int i = 0; i < numberOfObjects; i++)
-        {
-            SpawnObject();
-            yield return null;
-        }
-    }
+        // Memilih prefab objek secara acak
+        GameObject randomObjectPrefab = objectsToSpawn[Random.Range(0, objectsToSpawn.Length)];
 
-    void SpawnObject()
-    {
-        GameObject objectToSpawn = objectsToSpawn[Random.Range(0, objectsToSpawn.Length)];
-        float randomX = Random.Range(minX, maxX);
-        float randomY = Random.Range(minY, maxY);
-        Vector3 spawnPosition = new Vector3(randomX, randomY, 0f);
+        // Menghasilkan posisi acak dalam rentang yang ditentukan
+        Vector2 randomSpawnPosition = new Vector2(Random.Range(minX, maxX), Random.Range(minY, maxY));
 
-        GameObject spawnedObject = Instantiate(objectToSpawn, spawnPosition, Quaternion.identity);
+        // Membuat instance objek dan mengatur posisi
+        GameObject spawnedObject = Instantiate(randomObjectPrefab, randomSpawnPosition, Quaternion.identity);
 
-        // Tambahkan komponen Rigidbody2D
+        // Add a Rigidbody2D component to the spawned object
         Rigidbody2D rb2d = spawnedObject.AddComponent<Rigidbody2D>();
-        rb2d.gravityScale = 0; // Biarkan objek mengambang
+        rb2d.gravityScale = 0; // Set gravity scale to 0 to let the object float
 
-        // Tambahkan skrip MoveLeft
+        // Add the MoveLeft script to the spawned object
         MoveLeft moveLeftScript = spawnedObject.AddComponent<MoveLeft>();
-        moveLeftScript.speed = 5f; // Atur kecepatan objek yang bergerak ke kiri
+    }
+
+    private IEnumerator SpawnObjectsWithInterval()
+    {
+        while (numberOfObjects > 0)
+        {
+            SpawnObject(); // Panggil metode SpawnObject
+
+            // Tunggu sebelum memanggil kembali SpawnObject
+            yield return new WaitForSeconds(spawnInterval);
+
+            // Kurangi jumlah objek yang harus di-spawn
+            numberOfObjects--;
+        }
     }
 }

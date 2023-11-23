@@ -37,7 +37,7 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-   /* void OnTriggerEnter2D(Collider2D other)
+    void OnTriggerEnter2D(Collider2D other)
     {
         // Cek apakah objek yang disentuh memiliki tag "Obstacle" (Anda dapat menyesuaikan tag sesuai dengan kebutuhan)
         if (other.CompareTag("Obstacle"))
@@ -45,7 +45,7 @@ public class PlayerController : MonoBehaviour
             // Memanggil fungsi GameOver dengan indeks scene yang ditentukan
             GameOver();
         }
-    }*/
+    }
 
     public void GameOver()
     {
